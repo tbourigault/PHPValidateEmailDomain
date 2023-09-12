@@ -3,7 +3,7 @@
 This repository provides a PHP function to validate the domain of an email address using DNS over HTTPS 
 (DoH) service providers.
 
-The function, `validateEmailDomainWithDoH()`, validates an email address by sending a DNS query to one or more DoH 
+The function, `isValid()`, validates an email address by sending a DNS query to one or more DoH 
 server (with some reputable defaults included) and checking if the domain of the email has an MX record, and if this MX
 record is flagged as malware related or not.
 
@@ -21,31 +21,32 @@ The function was tested with PHP 8, but it should work with PHP 7. It requires t
 installed and activated. It also uses the PSR-3 LoggerInterface, and so a PSR-3 compliant logger (like Monolog) should 
 be given to the function for logging.
 
-It's not Composer ready because it's (almost) a single function, but you can copy the function in your project and use
-it directly. Also, sometimes I'm lazy.
-
 ## Usage
 
 Here is a simple usage example:
 
 ```php
-$log = new Psr\Log\Logger();
-
+$logger = new \CDemers\DoHEmailDomainValidator\Psr\Log\Logger();
+$emailValidator = new \CDemers\DoHEmailDomainValidator\EmailValidator($logger);
 try {
-    if (validateEmailDomainWithDoH('user.name@example.com', $log)) {
+    if ($emailValidator->isValid('user.name@example.com', $log)) {
         echo "Valid domain\n";
     } else {
         echo "Invalid domain\n";
     }
-} catch (Exception $e) {
+} catch (\CDemers\DoHEmailDomainValidator\InvalidSyntaxException $e) {
     echo 'Caught exception: ',  $e->getMessage(), "\n";
+} catch (\CDemers\DoHEmailDomainValidator\UnableToVerifyException $e) {
+    // You might want to consider the email valid if inconclusive
 }
 ```
 
-The function `validateEmailDomainWithDoH()` takes a string as it's first argument, which should be the email address 
+The function `isValid()` takes a string as it's first argument, which should be the email address 
 that you want to validate, and a PSR LoggerInterface compliant logger as it's second parameter. The function returns 
 `true` if the domain of the email is valid, and `false` if it is not valid or if it's considered dangerous by the DoH
-server. The function throws an exception if an error occurs while executing the validation.
+server. The function throws an InvalidSyntaxException if the email fails basic syntax validation and an 
+UnableToVerifyException if an error occurs while executing the validation and cannot determine if the domain is valid or 
+not.
 
 ## How it Works
 
@@ -55,7 +56,7 @@ The MX (Mail Exchanger) record is a type of resource record in the Domain Name S
 responsible for accepting email messages on behalf of a domain.
 
 If one DoH service is not available, it cycles through the list of DoH services until it finds one that is available. If
-none of the DoH services are available, it throws an exception.
+none of the DoH services are available, it throws an UnableToVerifyException.
 
 Note that this function does not check if the email address is actually in use. It only checks if the domain of
 the email address has an MX record.
@@ -76,9 +77,14 @@ thrown.
 - The Swiss-based Quad9 Foundation: https://www.quad9.net/
 - The PSR-3 LoggerInterface: https://www.php-fig.org/psr/psr-3/
 
+## Tests
+Use the following command to run this script:
+- first generate autoload file : `composer dump-autoload`
+- then `php tests/RunTests.php user.name@example.com`
+
 ## Contributing
 
-Feel free to submit pull requests to enhance the functionality of the `validateEmailDomainWithDoH()` function.
+Feel free to submit pull requests to enhance the functionality of the `EmailValidator` class.
 
 ## License
 
