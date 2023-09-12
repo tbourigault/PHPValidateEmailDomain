@@ -1,5 +1,5 @@
 {
-  "name": "cdemers/php-validate-email-domain",
+  "name": "cdemers/doh-email-domain-validator",
   "description": "Validate the domain of an email address using DNS over HTTPS (DoH)",
   "type": "library",
   "authors": [
@@ -10,6 +10,19 @@
   ],
   "license": "MIT",
   "require": {
-    "php": ">=7.0"
+    "php": ">=7.4",
+    "ext-json": "*",
+    "ext-curl": "*",
+    "psr/log": "^3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "CDemers\\DoHEmailDomainValidator\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "CDemers\\DoHEmailDomainValidator\\Tests\\": "tests"
+    }
   }
 }
