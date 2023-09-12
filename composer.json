@@ -1,0 +1,15 @@
+{
+  "name": "cdemers/php-validate-email-domain",
+  "description": "Validate the domain of an email address using DNS over HTTPS (DoH)",
+  "type": "library",
+  "authors": [
+    {
+      "name": "Charle Demers",
+      "email": "charle.demers@gmail.com"
+    }
+  ],
+  "license": "MIT",
+  "require": {
+    "php": ">=7.0"
+  }
+}
