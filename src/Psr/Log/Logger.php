@@ -1,5 +1,5 @@
 <?php
-namespace Psr\Log;
+namespace CDemers\DoHEmailDomainValidator\Psr\Log;
 
 class Logger implements LoggerInterface {
     public function emergency($message, array $context = []) {
